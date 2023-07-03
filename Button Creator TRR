@@ -1,0 +1,66 @@
+local module = {}
+
+function module:CreateButton(Tabler)
+	--[[
+	1 ParentThingy
+	2 Button Text
+	3 Callback
+	]]
+	
+	local Button = script.Button:Clone()
+	Button.Parent = Tabler[1]
+	
+	Button.LabelText.Text = Tabler[2]
+	
+	Button.TriggerEnd.MouseButton1Down:Connect(function()
+
+		local successer,errorzomg = pcall(function()
+			Tabler[3]()
+		end)
+		if not errorzomg then
+			spawn(function()
+				game:GetService("TweenService"):Create(Button,TweenInfo.new(0.001),{BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+				wait(.001)
+				game:GetService("TweenService"):Create(Button,TweenInfo.new(0.25,Enum.EasingStyle.Exponential,Enum.EasingDirection.In),{BackgroundColor3 = Color3.fromRGB(68, 68, 68)}):Play()
+			end)
+		else
+			spawn(function()
+				game:GetService("TweenService"):Create(Button,TweenInfo.new(0.001),{BackgroundColor3 = Color3.fromRGB(255, 0, 0)}):Play()
+				wait(.001)
+				game:GetService("TweenService"):Create(Button,TweenInfo.new(0.6,Enum.EasingStyle.Exponential,Enum.EasingDirection.In),{BackgroundColor3 = Color3.fromRGB(68, 68, 68)}):Play()
+			end)
+			error(errorzomg,2)
+		end
+		
+	end)
+end
+
+function module:CreateToggle(Tabler)
+	--[[
+	1 ParentThingy
+	2 Button Text
+	3 Startoff
+	]]
+
+	local Button = script.Toggle:Clone()
+	local IsToggled = Tabler[3]
+	Button.Parent = Tabler[1]
+
+	Button.LabelText.Text = Tabler[2]
+
+	Button.TriggerEnd.MouseButton1Down:Connect(function()
+		
+		if IsToggled then
+			game:GetService("TweenService"):Create(Button.Toggle,TweenInfo.new(.5),{BackgroundColor3 = Color3.fromRGB(255, 0, 0)}):Play()
+			IsToggled = false
+		else
+			game:GetService("TweenService"):Create(Button.Toggle,TweenInfo.new(.5),{BackgroundColor3 = Color3.fromRGB(0, 255, 0)}):Play()
+			IsToggled = true
+		end
+		Button.ToggleEvent:Fire(IsToggled)
+	end)
+	
+	return Button
+end
+
+return module
